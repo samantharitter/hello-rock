@@ -1,6 +1,6 @@
 // Hello, rock.
 
-var MIN_ARC = 10;
+var MIN_ARC = 3;
 var MAX_ARC = 120;
 
 // generate a random diamond
@@ -28,7 +28,7 @@ function generateShape() {
 
     // get cross section coordinates
     var N = Math.floor((Math.random() * 10) + 3);
-    var crossSection = crossSectionCoords(0, 0, 0, 1, .8, 1.5, N);
+    var crossSection = crossSectionCoords(0, 0, 0, 1.5, .2, 1.5, N);
 
     // compile these into a master list of coords
     var points = "";
@@ -108,13 +108,19 @@ function crossSectionCoords(Ox,
         }
 
         // calculate a new arc
+        var tries = 0;
         while (arc < MIN_ARC) {
-            var arc = Math.floor((Math.random()*MAX_ARC) + 1);
+            if (tries > 10) {
+                arc = MIN_ARC;
+                break;
+            };
+            var arc = (Math.random() * MAX_ARC);
 
             // if it's too big, reset to 0 so we try again.
             if ((360 - (totalArc + arc)) < (remainingNodes*MIN_ARC)) {
                 arc = 0;
             }
+            tries += 1;
         }
 
         totalArc += arc;
