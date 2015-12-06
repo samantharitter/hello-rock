@@ -28,7 +28,7 @@ function generateShape() {
 
     // get cross section coordinates
     var N = Math.floor((Math.random() * 10) + 3);
-    var crossSection = crossSectionCoords(0, 0, 0, 1, .8, 1.n5, N);
+    var crossSection = crossSectionCoords(0, 0, 0, 1, .8, 1.5, N);
 
     // compile these into a master list of coords
     var points = "";
