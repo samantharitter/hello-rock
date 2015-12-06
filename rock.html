@@ -36,8 +36,12 @@
         <shape> 
           <appearance> 
             <material diffuseColor='.58 .5 .45'></material> 
-          </appearance> 
-          <box></box>
+          </appearance>
+          <!-- order the vertices into faces /-->
+          <IndexedFaceSet id="rockFace" solid="FALSE" coordIndex="0 4 3 -1 1 4 0 -1 2 4 1 -1 3 4 2 -1 0 3 2 1">
+            <!-- the vertices /-->
+            <Coordinate id="rockCoords" point="1 0 -1, -1 0 -1, -1 0 1, 1 0 1, 0 2 0"/>
+          </IndexedFaceSet>
         </shape>
 
       </scene> 
@@ -51,8 +55,14 @@
 <!-- Bootstrap JS /-->
 <script src="js/bootstrap.js"></script>
 
-<!-- Mine.
-<script src="js/hellorock.js"></script> /-->
+<!-- Mine. /-->
+<script src="js/hellorock.js"></script>
+
+<script>
+$(document).ready(function() {
+generateShape();
+});
+</script>
 
 </body>
 
