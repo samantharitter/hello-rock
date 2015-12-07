@@ -1,12 +1,7 @@
 // Hello, rock.
 
-var MIN_ARC = 3;
-var MAX_ARC = 120;
-
-// generate a random diamond
-
-// first, pick two endpoints
-// pick a random point along line between endpoints to be the "midpoint"
+var MIN_ARC = 10;
+var MAX_ARC = 100;
 
 // Given an angle theta, return which quadrant the angle lands in.
 function quadrant(theta) {
@@ -21,14 +16,35 @@ function quadrant(theta) {
     }
 }
 
+// Generate a random "rock."
 function generateShape() {
+    var length = Math.floor((Math.random() * 8) + 2);
+
     // pick endpoints
-    var e1 = [ 0, 0, -2 ];
-    var e2 = [ 0, 0, 2 ];
+    var z1 = -(length/2);
+    var z2 = length/2;
+
+    var e1 = [ 0, 0, z1 ];
+    var e2 = [ 0, 0, z2 ];
+
+    // how many vertices in each cross section?
+    var N = Math.floor((Math.random() * 10) + 5);
+
+    // decide how many cross sections we'll do
+    var numSections = Math.floor((Math.random() * 3) + 2);
+    console.log("numSections:");
+    console.log(numSections);
+
+    var baseRadius = (Math.random() * length/2) + length/8;
+    var sectionLength = length/(numSections + 1);
 
     // get cross section coordinates
-    var N = Math.floor((Math.random() * 10) + 3);
-    var crossSection = crossSectionCoords(0, 0, 0, 1.5, .2, 1.5, N);
+    var sections = [];
+    for (var i = 0; i < numSections; i++) {
+        var Oz = z1 + (sectionLength * (i + 1));
+        var radius = (Math.random() * (length/6)) + baseRadius;
+        sections.push(crossSectionCoords(0, 0, Oz, radius, (.1 * radius), (.75 * sectionLength), N));
+    }
 
     // compile these into a master list of coords
     var points = "";
@@ -39,37 +55,39 @@ function generateShape() {
 
     var faces = "";
 
-    // for debugging: just the cross section face
-    var crossFace = "";
-
     // add cross-section, and faces
-    for (var i = 0; i < N; i++) {
-        // add vertices
-        var point = crossSection[i];
-        points += ", " + point[0] + " " + point[1] + " " + point[2];
+    for (var section = 0; section < numSections; section++) {
+        for (var i = 0; i < N; i++) {
 
-        // add faces:
-        // one from i to (i+1) to endpoint1
-        // one from i to (i+1) to endpoint2
-        var thisPoint = i + 2;
-        var otherPoint;
-        if (i == (N - 1)) {
-            otherPoint = 2;
-        } else {
-            otherPoint = i + 3;
+            // add vertices
+            var point = sections[section][i];
+            points += ", " + point[0] + " " + point[1] + " " + point[2];
+
+            // add faces
+            var thisPoint = 2 + (section * N) + i;
+            var nextPoint;
+            if (i == (N - 1)) {
+                nextPoint = 2 + (section * N);
+            } else {
+                nextPoint = thisPoint + 1;
+            }
+
+            // If this is the first section, need faces to e1
+            if (section == 0) {
+                faces += thisPoint + " " + nextPoint + " 0 -1 ";
+            }
+
+            // Unless this is the last section, need faces to next section
+            if (section < (numSections - 1)) {
+                var nextFaceThisPoint = thisPoint + N;
+                var nextFaceNextPoint = nextPoint + N;
+                faces += thisPoint + " " + nextPoint + " " + nextFaceNextPoint + " " + nextFaceThisPoint + " -1 ";
+            } else {
+                // For the last section, need faces to e2
+                faces += thisPoint + " " + nextPoint + " 1 -1 ";
+            }
         }
-
-        faces += thisPoint + " " + otherPoint + " 0 -1 "; // e1
-        faces += thisPoint + " " + otherPoint + " 1 -1 "; // e2
-
-        // debugging
-        crossFace += thisPoint + " ";
     }
-
-    crossFace += "-1";
-    //$("#rockFace").attr("coordIndex", crossFace);
-    //console.log("cross face:");
-    //console.log(crossFace);
 
     // now set the appropriate things!
     $("#rockFace").attr("coordIndex", faces);
@@ -102,7 +120,6 @@ function crossSectionCoords(Ox,
         var remainingNodes = N - i - 1;
         var arc = 0;
 
-        //arc = 360/N;
         if ((360 - totalArc) == remainingNodes * MIN_ARC) {
             arc = MIN_ARC;
         }
@@ -114,10 +131,11 @@ function crossSectionCoords(Ox,
                 arc = MIN_ARC;
                 break;
             };
+
             var arc = (Math.random() * MAX_ARC);
 
             // if it's too big, reset to 0 so we try again.
-            if ((360 - (totalArc + arc)) < (remainingNodes*MIN_ARC)) {
+            if ((360 - (totalArc + arc)) < (remainingNodes * MIN_ARC)) {
                 arc = 0;
             }
             tries += 1;
