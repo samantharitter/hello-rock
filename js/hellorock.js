@@ -18,6 +18,11 @@ function quadrant(theta) {
 
 // Generate a random "rock."
 function generateShape() {
+    // first pick a background
+    var bg = Math.floor((Math.random() * 11) + 1);
+    var url = "img/rock" + bg + ".jpg";
+    $("#rockTexture").attr("url", url);
+
     var length = Math.floor((Math.random() * 8) + 2);
 
     // pick endpoints

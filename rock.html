@@ -32,10 +32,12 @@
     <br/><br/><br/>
 
     <x3d width='600px' height='400px'> 
-      <scene> 
+      <scene>
+        <directionalLight id="directional" direction='-1 -1 1' on ="TRUE" intensity='1.0' shadowIntensity='0.5'> </directionalLight>
         <shape> 
           <appearance> 
-            <material diffuseColor='.58 .5 .45'></material> 
+            <ImageTexture id="rockTexture" url="img/rock_texture.png"><ImageTexture/>
+             <!-- <material diffuseColor='.58 .5 .45'></material>/-->
           </appearance>
           <!-- order the vertices into faces /-->
           <IndexedFaceSet id="rockFace" solid="FALSE" coordIndex="0 4 3 -1 1 4 0 -1 2 4 1 -1 3 4 2 -1 0 3 2 1">
